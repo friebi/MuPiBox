@@ -5,6 +5,18 @@
 
 RELEASE="stable"
 LOG="/tmp/autosetup.log"
+BOOT_DIR="/boot"
+BOOT_CONFIG="/boot/config.txt"
+BOOT_CMDLINE="/boot/cmdline.txt"
+
+if [ -f "/boot/firmware/config.txt" ]; then
+  BOOT_DIR="/boot/firmware"
+  BOOT_CONFIG="/boot/firmware/config.txt"
+fi
+
+if [ -f "/boot/firmware/cmdline.txt" ]; then
+  BOOT_CMDLINE="/boot/firmware/cmdline.txt"
+fi
 VER_JSON="/tmp/version.json"
 CONFIG="/etc/mupibox/mupiboxconfig.json"
 STEP=0
@@ -314,7 +326,7 @@ rm -Rf /home/dietpi/mupibox.zip /home/dietpi/MuPiBox-* >&3 2>&3
 	echo -e "XXX\n${STEP}\nCopy media files... \nXXX"
 	before=$(date +%s)
 	mv -f ${MUPI_SRC}/config/templates/splash.txt /boot/splash.txt >&3 2>&3
-	wget https://gitlab.com/DarkElvenAngel/initramfs-splash/-/raw/master/boot/initramfs.img -O /boot/initramfs.img >&3 2>&3
+	wget https://gitlab.com/DarkElvenAngel/initramfs-splash/-/raw/master/boot/initramfs.img -O "${BOOT_DIR}/initramfs.img" >&3 2>&3
 	cp ${MUPI_SRC}/media/images/goodbye.png /home/dietpi/MuPiBox/sysmedia/images/goodbye.png >&3 2>&3
 	mv -f ${MUPI_SRC}/media/images/splash.png /boot/splash.png >&3 2>&3
 	cp ${MUPI_SRC}/media/images/MuPiLogo.jpg /home/dietpi/MuPiBox/sysmedia/images/MuPiLogo.jpg >&3 2>&3
@@ -453,18 +465,18 @@ rm -Rf /home/dietpi/mupibox.zip /home/dietpi/MuPiBox-* >&3 2>&3
 	chown root:www-data ${CONFIG} >&3 2>&3
 	chmod 775 ${CONFIG} >&3 2>&3
 
-	if grep -q '^dtparam=gpio=on' /boot/config.txt; then
-		echo -e "dtparam=gpio=on already set" >&3 2>&3
+	if grep -q '^dtparam=gpio=on' "${BOOT_CONFIG}"; then
+	  echo -e "dtparam=gpio=on already set" >&3 2>&3
 	else
-		echo '' | tee -a /boot/config.txt >&3 2>&3
-		echo 'dtparam=gpio=on' | tee -a /boot/config.txt >&3 2>&3
+	  echo '' | tee -a "${BOOT_CONFIG}" >&3 2>&3
+	  echo 'dtparam=gpio=on' | tee -a "${BOOT_CONFIG}" >&3 2>&3
 	fi
 
-	if grep -q '^dtoverlay=gpio-poweroff,gpiopin=4,active_low=1' /boot/config.txt; then
-		echo -e "dtoverlay gpio-poweroff already set" >&3 2>&3
+	if grep -q '^dtoverlay=gpio-poweroff,gpiopin=4,active_low=1' "${BOOT_CONFIG}"; then
+	  echo -e "dtoverlay=gpio-poweroff already set" >&3 2>&3
 	else
-		echo '' | tee -a /boot/config.txt >&3 2>&3
-		echo 'dtoverlay=gpio-poweroff,gpiopin=4,active_low=1' | tee -a /boot/config.txt >&3 2>&3
+	  echo '' | tee -a "${BOOT_CONFIG}" >&3 2>&3
+	  echo 'dtoverlay=gpio-poweroff,gpiopin=4,active_low=1' | tee -a "${BOOT_CONFIG}" >&3 2>&3
 	fi
 
 	curl https://raw.githubusercontent.com/scopatz/nanorc/master/install.sh | sh >&3 2>&3
