@@ -33,11 +33,11 @@ else
 fi
 
 # Check GPIO status
-gpio_status=$(gpioget --chip ${GPIO_CHIP} ${TRIGGER_PIN})
+gpio_status=$(pinctrl lev ${TRIGGER_PIN})
 echo "$(date) - INFO:  GPIO${TRIGGER_PIN} status: ${gpio_status}" >> ${LOGFILE}
 
 check_button_pressed() {
-    local button_state=$(gpioget --chip ${GPIO_CHIP} ${TRIGGER_PIN})
+    local button_state=$(pinctrl lev ${TRIGGER_PIN})
     if [ "$button_state" = "0" ]; then
         return 0  # Button is pressed
     else
