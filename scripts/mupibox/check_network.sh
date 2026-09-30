@@ -77,6 +77,8 @@ ensure_symlink() {
 	fi
 }
 
+while true
+do
 	# AR5-1 history: this used to be `if ( $(python3 ...) == ${TRUESTATE} )`,
 	# a bash subshell that executed the python output as a command instead of
 	# comparing strings — the condition was permanently false. Our fix back
