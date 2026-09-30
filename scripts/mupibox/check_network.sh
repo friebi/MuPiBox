@@ -53,8 +53,6 @@ if [ ! -s ${NETWORKCONFIG} ] || ! /usr/bin/jq -e 'type == "object"' ${NETWORKCON
         chmod 777 ${NETWORKCONFIG}
 fi
 
-/usr/local/bin/mupibox/./get_network.sh
-
 # Idempotent symlink reconciliation. Always points $link at $target —
 # if the link already points there, no-op. Replaces the previous
 # state-transition-only logic that depended on detecting a change
